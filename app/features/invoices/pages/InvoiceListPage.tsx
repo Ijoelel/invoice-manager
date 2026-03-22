@@ -8,11 +8,13 @@ import InvoiceFIlters from "../components/InvoiceFIlters";
 import InvoicePagination from "../components/InvoicePagination";
 import { useInvoiceQueryParams } from "../hooks/useInvoiceQueryParams";
 import InvoiceSearch from "../components/InvoiceSearch";
+import { useInvoicesCount } from "../hooks/useInvoicesCount";
 
 const InvoicesListPage = () => {
     const { params, page, updateParams } = useInvoiceQueryParams();
 
     const query = useInvoices(params);
+    const { data: total } = useInvoicesCount();
     console.log(query);
 
     return (
@@ -43,7 +45,7 @@ const InvoicesListPage = () => {
 
             <InvoicePagination
                 page={page}
-                totalPages={3}
+                totalPages={Math.floor(total!/ 10) + 1}
                 params={params}
                 updateParams={updateParams}
             />

@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from "react-router";
+import { Link, useParams, useSearchParams } from "react-router";
 import { useInvoiceDetail } from "../hooks/useInvoiceDetail";
 import InvoiceNotFound from "~/error/InvoiceNotFound";
 import { useUpdateInvoiceStatus } from "../hooks/useUpdateInvoiceStatus";
@@ -44,7 +44,9 @@ const InvoiceDetailPage = () => {
             {/* Header */}
             <div className="flex justify-between items-center">
                 <div className="flex gap-2 items-center justify-center">
-                    <ChevronLeft className="w-6" />
+                    <Link to={"/invoices"}>
+                        <ChevronLeft className="w-6" />
+                    </Link>
                     <h1 className="text-2xl font-bold">{data.id}</h1>
                 </div>
 

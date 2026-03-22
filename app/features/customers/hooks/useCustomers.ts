@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getCustomers } from "../api/customers.api";
 
-export function useInvoices(params?: ApiParams) {
+export function useCustomers(params?: ApiParams) {
     return useQuery({
         queryKey: ["customers", params],
         queryFn: () => getCustomers(params),

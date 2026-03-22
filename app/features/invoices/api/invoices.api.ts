@@ -117,6 +117,14 @@ export const getInvoiceById = async (id: string) => {
     };
 };
 
+export const getInvoicesCount = async () => {
+    const res = await http.get<InvoiceHTTPResponse>(
+        "/invoices?_page=1&_per_page=10",
+    );
+
+    return res.items;
+};
+
 // POST
 export const createInvoice = (data: Partial<Invoice>) => {
     return http.post<Invoice>("/invoices", data);
