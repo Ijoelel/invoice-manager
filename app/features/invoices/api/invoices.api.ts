@@ -63,8 +63,13 @@ export const getInvoices = async (params?: Params) => {
         delete query._per_page;
     }
 
+    if (limit === 0) {
+        delete query._page;
+        delete query._per_page;
+    }
+
     // 🔥 fetch invoices
-    if (search) {
+    if (search || limit === 0) {
         const res = await http.get<Invoice[]>("/invoices", query);
         data = res;
     } else {
@@ -94,12 +99,6 @@ export const getInvoices = async (params?: Params) => {
         const paginated = joined.slice(start, start + (limit ?? 10));
 
         return paginated;
-        // {
-        // data: paginated
-        // page: currentPage,
-        // total,
-        // totalPages,
-        // };
     }
 
     // default (no search)
@@ -115,6 +114,10 @@ export const getInvoiceById = async (id: string) => {
         ...data[0],
         customer: customer[0],
     };
+};
+
+export const getInvoicesByCustomer = async (customerId: string) => {
+    return await http.get<Invoice[]>(`/invoices?customer_id=${customerId}`);
 };
 
 export const getInvoicesCount = async () => {

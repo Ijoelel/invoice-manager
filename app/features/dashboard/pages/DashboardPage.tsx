@@ -10,8 +10,12 @@ const DashboardPage = () => {
     if (isError) return <div>Error loading dashboard</div>;
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-xl font-bold">Dashboard</h1>
+        <div className="p-6 space-y-6">
+            <div className="flex justify-between items-center">
+                <div className="flex gap-2 items-center justify-center">
+                    <h1 className="text-xl font-bold">Dashboard</h1>
+                </div>
+            </div>
 
             <SummaryCards summary={data?.summary} isLoading={isLoading} />
             <div className="flex w-full gap-2">

@@ -6,24 +6,27 @@ import {
 } from "../schemas/invoice.schema";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router";
+import { useDebounce } from "use-debounce";
+import { useInvoiceDraftStore } from "~/stores/invoices/useInvoioceDraftStore";
+import { useEffect, useRef } from "react";
 
 const InvoiceForm = () => {
     const { data: customers } = useCustomers();
     const mutation = useCreateInvoice();
-    const navigate = useNavigate();
+
+    const { draft, hasHydrated, setDraft, reset } = useInvoiceDraftStore();
 
     const {
         register,
         control,
         handleSubmit,
         formState: { errors },
+        watch,
+        reset: formReset,
+        setValue,
     } = useForm<InvoiceFormValues>({
         resolver: zodResolver(invoiceSchema),
-        defaultValues: {
-            status: "draft",
-            items: [{ name: "", qty: 1, price: 0, unit: "volume" }],
-        },
+        defaultValues: draft,
     });
 
     const { fields, append, remove } = useFieldArray({
@@ -31,18 +34,52 @@ const InvoiceForm = () => {
         name: "items",
     });
 
-    const onSubmit = (data: InvoiceFormValues) => {
+    const values = watch();
+    console.log(values);
+
+    const [debouncedValues] = useDebounce(values, 300);
+
+    const hasMounted = useRef(false);
+
+    const onSubmit = async (data: InvoiceFormValues, e: any) => {
+        e.preventDefault();
+
         const amount = data.items.reduce(
             (acc, item) => acc + item.qty * item.price,
             0,
         );
 
-        mutation.mutate({
+        await mutation.mutateAsync({
             ...data,
             amount,
         });
+
+        reset(); // Zustand reset
+        formReset();
     };
-    console.log(mutation);
+
+    useEffect(() => {
+        if (hasHydrated) {
+            formReset(draft);
+        }
+    }, [hasHydrated]);
+
+    useEffect(() => {
+        if (!hasHydrated) return;
+
+        if (!hasMounted.current) {
+            hasMounted.current = true;
+            return;
+        }
+
+        setDraft(debouncedValues);
+    }, [debouncedValues, hasHydrated]);
+
+    useEffect(() => {
+        if (customers && draft.customer_id) {
+            setValue("customer_id", draft.customer_id);
+        }
+    }, [customers]);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 text-sm">
@@ -169,7 +206,12 @@ const InvoiceForm = () => {
             {/* Footer */}
             <div className="flex justify-between items-center pt-4 border-t">
                 <span className="text-gray-500">Total</span>
-                {/* <span className="font-medium">Rp {total.toLocaleString()}</span> */}
+                <span className="font-medium">
+                    Rp{" "}
+                    {draft.items
+                        .reduce((acc, item) => acc + item.qty * item.price, 0)
+                        .toLocaleString()}
+                </span>
             </div>
 
             {/* Error global */}

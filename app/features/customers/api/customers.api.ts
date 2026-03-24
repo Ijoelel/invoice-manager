@@ -3,7 +3,7 @@ import type { Customer, CustomerHTTPResponse } from "../types/customers.type";
 import { http } from "~/shared/lib/api-client";
 
 export const getCustomerById = (id: string) => {
-    return http.get<Customer[]>(`/customers?id:eq=${id}`);
+    return http.get<Customer[]>(`/customers?id=${id}`);
 };
 
 export const getCustomers = (params?: ApiParams) => {

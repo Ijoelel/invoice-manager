@@ -47,7 +47,7 @@ const InvoiceDetailPage = () => {
                     <Link to={"/invoices"}>
                         <ChevronLeft className="w-6" />
                     </Link>
-                    <h1 className="text-2xl font-bold">{data.id}</h1>
+                    <h1 className="text-xl font-bold">Invoice of {data.id}</h1>
                 </div>
 
                 <div className="flex gap-2">

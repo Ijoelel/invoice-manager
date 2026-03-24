@@ -22,7 +22,7 @@ export default [
 
         // customers (bonus)
         ...prefix("customers", [
-            route(":id", "./features/customers/pages/CustomerPage.tsx"),
+            route(":id", "./features/customers/pages/CustomerProfilePage.tsx"),
         ]),
         route("/test", "./test.tsx"),
     ]),

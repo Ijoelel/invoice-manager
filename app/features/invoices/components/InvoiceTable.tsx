@@ -38,9 +38,12 @@ const InvoiceTable = ({
         columnHelper.accessor("customer", {
             header: "Customer Name",
             cell: (info) => (
-                <span className="font-medium text-gray-900">
+                <Link
+                    to={`/customers/${info.getValue()?.id}`}
+                    className="font-medium text-gray-900 hover:underline"
+                >
                     {info.getValue()?.name}
-                </span>
+                </Link>
             ),
         }),
 
@@ -70,7 +73,7 @@ const InvoiceTable = ({
             header: "Amount",
             cell: (info) => (
                 <span className="font-medium text-gray-900">
-                    Rp {info.getValue().toLocaleString()}
+                    Rp {info.getValue()}
                 </span>
             ),
         }),

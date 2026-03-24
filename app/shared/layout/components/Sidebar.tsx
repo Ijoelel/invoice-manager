@@ -1,58 +1,64 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Plus } from "lucide-react";
+import {
+    ChevronDown,
+    ChevronUp,
+    PanelLeftClose,
+    PanelLeftOpen,
+    Plus,
+} from "lucide-react";
 import { sidebarItems, user } from "../config/sidebar.config";
 import SidebarItem from "./SidebarItem";
-
-const NavLink = ({ item, currentPath }) => {
-    const Icon = item.icon;
-    const active = currentPath === item.path;
-
-    return (
-        <a
-            href={item.path}
-            onClick={(e) => e.preventDefault()}
-            className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors
-        ${
-            active
-                ? "bg-surface-dim text-primary font-bold"
-                : "text-slate-600 hover:bg-surface-dim/50 font-medium"
-        }`}
-        >
-            <Icon size={18} strokeWidth={active ? 2.5 : 2} />
-            <span>{item.label}</span>
-        </a>
-    );
-};
+import { useSidebarStore } from "~/stores/sidebar/useSidebarStore";
+import { useLocation, useNavigate, useParams, useRoutes } from "react-router";
 
 export default function Sidebar() {
     // Track which groups are collapsed. All open by default.
     const [collapsed, setCollapsed] = useState({});
-    const [currentPath, setCurrentPath] = useState("/");
+    const currentPath = useLocation();
+    const navigate = useNavigate();
+    const { isOpen, toggle } = useSidebarStore();
 
     const toggleGroup = (group) =>
         setCollapsed((prev) => ({ ...prev, [group]: !prev[group] }));
 
     return (
-        <aside className="hidden md:flex flex-col fixed inset-y-0 left-0 w-60 p-5 bg-surface-container-low z-50">
+        <aside
+            className={`
+                fixed inset-y-0 left-0 z-50 flex flex-col p-5 bg-surface-container-low border-r border-r-gray-300 transition-all duration-300
+                ${isOpen ? "w-60" : "w-20"}
+                ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0
+            `}
+        >
             {/* Brand */}
-            <div className="flex items-center gap-3 mb-8">
-                <div>
-                    <span className="text-lg font-extrabold tracking-tight text-primary font-headline">
-                        Velto
-                    </span>
-                    <p className="text-[10px] text-slate-500 font-semibold">
-                        {user.plan}
-                    </p>
-                </div>
+            <div className="flex w-full justify-between items-start gap-3 mb-8">
+                {isOpen && (
+                    <div>
+                        <span className="text-lg font-extrabold text-primary">
+                            Velto
+                        </span>
+                        <p className="text-[10px] text-slate-500 font-semibold">
+                            {user.plan}
+                        </p>
+                    </div>
+                )}
+
+                <button onClick={toggle}>
+                    {isOpen ? (
+                        <PanelLeftClose size={18} />
+                    ) : (
+                        <PanelLeftOpen size={18} />
+                    )}
+                </button>
             </div>
 
             {/* Create Button */}
-            <button className="w-full mb-6 flex items-center justify-between px-4 py-2.5 bg-primary text-white rounded-lg font-bold text-sm shadow-card hover:bg-primary-light transition-colors">
-                <div className="flex items-center gap-2">
-                    <Plus size={18} />
-                    Create
-                </div>
-                <span className="text-[10px] opacity-60">N</span>
+            <button
+                className={`w-full mb-6 flex items-center ${
+                    isOpen ? "gap-2 px-4" : "justify-center px-2"
+                } py-2.5 bg-primary text-white rounded-lg font-bold text-sm`}
+            >
+                <Plus size={18} />
+                {isOpen && <span>Create</span>}
             </button>
 
             {/* Nav groups */}
@@ -64,9 +70,11 @@ export default function Sidebar() {
                             onClick={() => toggleGroup(group)}
                             className="w-full flex items-center justify-between px-3 mb-1"
                         >
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                                {group}
-                            </span>
+                            {isOpen && (
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                                    {group}
+                                </span>
+                            )}
                             {collapsed[group] ? (
                                 <ChevronDown
                                     size={12}
@@ -86,13 +94,11 @@ export default function Sidebar() {
                                 {items.map((item) => (
                                     <div
                                         key={item.path}
-                                        onClick={() =>
-                                            setCurrentPath(item.path)
-                                        }
+                                        onClick={() => navigate(item.path)}
                                     >
                                         <SidebarItem
                                             item={item}
-                                            currentPath={currentPath}
+                                            currentPath={currentPath.pathname}
                                         />
                                     </div>
                                 ))}

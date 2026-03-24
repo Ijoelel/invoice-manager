@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 type RequestOptions = RequestInit & {
     params?: Record<string, string | number | boolean>;

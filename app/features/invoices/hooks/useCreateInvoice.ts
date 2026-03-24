@@ -14,20 +14,25 @@ export function useCreateInvoice() {
     const navigate = useNavigate();
 
     return useMutation({
-        mutationFn: async (newData: InvoiceFormValues) => {
-            // ambil data invoices dari cache
+        mutationFn: async (newData: Omit<Invoice, "id">) => {
             const invoicesCount = await getInvoicesCount();
 
             let nextId = `INV-2024-${invoicesCount + 1}`;
 
-            return createInvoice({
+            // const joh = setTimeout(() => console.log("rawrrr"), 3000);
+
+            const res = await createInvoice({
                 ...newData,
                 id: nextId,
             });
+
+            return res;
         },
         onSuccess: (data) => {
+            queryClient.invalidateQueries({
+                queryKey: ["invoices", "newInvoice"],
+            });
             navigate(`/invoices/${data.id}`);
-            queryClient.invalidateQueries({ queryKey: ["invoices"] });
         },
     });
 }
