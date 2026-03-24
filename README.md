@@ -31,13 +31,7 @@ npm install
 npm install --legacy-peer-deps
 ```
 
-### 3. Run JSON Server (Mock API)
-
-```bash
-npx json-server --watch db.json --port 3000
-```
-
-### 4. Run Frontend
+### 3. Run Frontend
 
 ```bash
 npm run dev
@@ -78,26 +72,7 @@ http://localhost:5173
 
 ### Mock API
 
-- JSON Server
-
----
-
-## 📂 Project Structure
-
-```
-src/
- ├── app/
- ├── features/
- │    ├── invoices/
- │    ├── customers/
- │    └── dashboard/
- ├── shared/
- │    ├── components/
- │    ├── hooks/
- │    └── utils/
- ├── stores/
- └── lib/
-```
+- JSON Server (served on vercel)
 
 ---
 
@@ -197,21 +172,3 @@ Ensuring UI updates after mutations.
 Using keepPreviousData & prefetching.
 
 ---
-
-## 🧪 Additional Improvements
-
-- Debounced search
-- Skeleton loading
-- Error boundary
-- Toast notifications
-
----
-
-## 🏁 Conclusion
-
-This project focuses on:
-
-- Clean architecture
-- Separation of concerns
-- Efficient server state management
-- Scalable structure
